@@ -1,5 +1,4 @@
 ### *Algorithm*
 
->* 백준알고리즘 복습용
->* C언어
+>* BOJ Review
 >* APRIL 2022 - ongoing
