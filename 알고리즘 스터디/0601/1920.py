@@ -1,12 +1,10 @@
-import sys
+n=int(input())
+index=set(map(int, input().split()))
+m=int(input())
+s=list(map(int, input().split()))
 
-n=int(sys.stdin.readline())
-index=set(sys.stdin.readline().rstrip())
-m=int(sys.stdin.readline())
-s=set(sys.stdin.readline().rstrip())
-
-for i in range(m):
-    if s in index:
+for i in s:
+    if i in index:
         print(1)
     else :
         print(0)
