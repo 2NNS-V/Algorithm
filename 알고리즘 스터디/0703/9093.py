@@ -9,7 +9,6 @@ for _ in range(t) :
         while stack:
             print(stack.pop(), end='')
         print(end=' ')
-            
 
 
 
