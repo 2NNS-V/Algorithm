@@ -1,4 +1,3 @@
 ### Algorithm
 
->* BOJ Review
->* algorithm study & self learning
+백준 알고리즘 문제 풀이 모음집
