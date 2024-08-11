@@ -1,45 +1,37 @@
 #include <iostream>
 #include <vector>
- 
+
 using namespace std;
- 
-int t,n,tmp;
- 
-void solve() {
-    cin >> t;
-    
-    while(t--) {
-        cin >> n;
-        int answer = 0;
-        vector<int> student;
+
+int main(){
+    int p, num, t;
+    cin >> p;
+
+    for (int i = 0; i < p; i++) {
+        int cnt = 0;
+        vector<int>arr;
+
+        cin >> t;
+        cin >> num;
+        arr.push_back(num);
         
-        cin >> tmp;
-        student.push_back(tmp);
-        
-        for(int i=1; i<20; i++) {
-            cin >> tmp;
-            bool check = true;
-            int min_tmp = -1;
-            
-            for(int j=student.size()-1; j>=0; j--) {
-                if(student[j] > tmp) {
-                    min_tmp = j;
+        for (int j = 1; j < 20; j++) {
+            int minValue = -1;
+            cin >> num;
+
+            for (int k = arr.size() -1; k >= 0; k--) {
+                if (num < arr[k]) {
+                    minValue = k;
                 }
             }
-            
-            if(min_tmp == -1) { student.push_back(tmp); }                                                        
+            if (minValue == -1) arr.push_back(num);
             else {
-                answer += student.size() - min_tmp;
-                student.insert(student.begin() + min_tmp,tmp);
+                cnt += arr.size() - minValue;
+                arr.insert(arr.begin() + minValue, num);
             }
-        }        
-        
-        cout << n << " " << answer << '\n';
+        }
+
+        cout << t << " " << cnt << "\n";
     }
-}
- 
- 
-int main() {
-    solve();
-    
+    return 0;
 }
