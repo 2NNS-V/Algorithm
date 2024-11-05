@@ -9,24 +9,23 @@ int arr1[MAX] = {0,};
 int arr2[MAX] = {0,};
 int visited[MAX] = {0,};
 
-void dfs(int i) {
+void dfs(int num, int i) {
     if (i == m) {
         for (int j = 0; j < m; j++) {
             cout << arr2[j] << " ";
         }
         cout << "\n";
+        return;
     }
-    else {
-        for (int j = 0; j < n; j++) {
-            if (!visited[j]) {
-                visited[j] = 1;
-                arr2[i] = arr1[j];
-                dfs(i + 1);
-                visited[j] = 0;
-            }
+    for (int j = 0; j < n; j++) {
+        if (!visited[j]) {
+            visited[j] = 1;
+            arr2[i] = arr1[j];
+            dfs(j, i+1);
+            visited[j] = 0;
         }
+        
     }
-    
 }
 
 int main() {
@@ -35,5 +34,5 @@ int main() {
         cin >> arr1[i];
     }
     sort(arr1, arr1+n);
-    dfs(0);
+    dfs(1, 0);
 }
