@@ -1,20 +1,19 @@
 #include <string>
 #include <vector>
-#include <cmath>
 
 using namespace std;
 
 vector<int> solution(int brown, int yellow) {
     vector<int> answer;
-    int num = brown + yellow;
-    for (int i = 1; i <= sqrt(num); i++) {
-        if (num % i == 0 && num / i >= i) {
-            if ((num/i - 2) * (i - 2) == yellow) {
-                answer.push_back(num/i);
+    // 가로 길이는 세로와 같거나 길다. -> 약수 중에 ?
+    int total = brown + yellow;
+    for (int i = 1; i <= total / 2; i++) {
+        if (total % i == 0 && total / i >= i) {
+            if ((total / i - 2)  * (i - 2) == yellow) {
+                answer.push_back(total/i);
                 answer.push_back(i);
                 break;
             }
-            
         }
     }
     return answer;
