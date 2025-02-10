@@ -1,28 +1,27 @@
 #include <string>
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
 string solution(string s) {
     string answer = "";
+    bool newWord = true;
     
-    for (int i = 0;i<=s.length(); ++i) {
-        
-        if (i == 0) {
-            if (s[i] >= 'a' && s[i] <= 'z') s[i] -= 32;
+    for (auto c: s) {
+        if (c == ' ') {
+            answer += c;
+            newWord = true;
         }
         else {
-            if (s[i-1] == ' ' && s[i] >= 'a' && s[i] <= 'z') {
-                s[i]-=32;
-            }
-            if (s[i-1] != ' ' && s[i] >= 'A' && s[i] <= 'Z') {
-                s[i] += 32;
-            }
-    
-           answer += s[i-1];
+            if (newWord && isalpha(c)) answer += toupper(c);
+            else answer += tolower(c);
+            newWord = false;
+            
         }
-        
     }
+    
+    
 
     return answer;
 }
