@@ -4,24 +4,43 @@
 
 using namespace std;
 
-int count_one(int n) {
+int count_one(const string &str) {
     int cnt = 0;
-    while (n) {
-        if (n % 2 == 1) cnt++;
-        n /= 2;
+    for (auto c: str) {
+        if (c == '1') cnt++;
     }
     return cnt;
 }
 
-// n보다 큰 것 중 2진수 변환시 1의 개수가 같은 것 중 가장 작은 수
+string to_binary(int n) {
+    string binary = "";
+    while (n) {
+        binary = (n % 2 == 0 ? '0' : '1') + binary;
+        n /= 2;
+    }
+    return binary;
+}
+
 int solution(int n) {
     int answer = 0;
-    int n_cnt = count_one(n);
+    // 조건1: n보다 큼
+    // 조건2: 2진수로 변환했을 때 1의 개수가 같음
+    // 조건3: 조건1, 2를 만족하는 수 중에서 가장 작은 수
     
-    int number = n + 1; 
-    while (count_one(number) != n_cnt) {
-        number++;
+    int n_cnt = count_one(to_binary(n));
+    
+    while (1) {
+        if (n > 1000000) break;
+        // 2진수로 변환
+        int tmp = ++n;
+        string binary = to_binary(tmp);
+
+        // 1개 개수 카운트
+        if (count_one(binary) == n_cnt) {
+            answer = tmp;
+            break;
+        }
     }
-    answer = number;
+    
     return answer;
 }
