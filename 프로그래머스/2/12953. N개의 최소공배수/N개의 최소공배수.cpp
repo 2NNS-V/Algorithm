@@ -1,30 +1,28 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <iostream>
 
 using namespace std;
 
-int GCD(int a, int b) {
-    int max_value = max(a, b);
-    int min_value = min(a, b);
+int gcd(int A, int B){
+    int a = max(A, B);
+    int b = min(A, B);
     
-    while (max_value % min_value != 0) {
-        int rest = max_value % min_value;
-        max_value = min_value;
-        min_value = rest;
+    while (a % b != 0) {
+        int tmp = a % b;
+        a = b;
+        b = tmp;
     }
-    return min_value;
+    
+    return b;
 }
 
 int solution(vector<int> arr) {
     int answer = arr[0];
-
     for (int i = 1; i < arr.size(); i++) {
-        int gcd = GCD(arr[i], answer);
-        int lcd = answer * arr[i] / gcd;
-        answer = lcd;
+        int GCD = gcd(answer, arr[i]);
+        int LCM = (answer * arr[i]) / GCD;
+        answer = LCM;
     }
-    
     return answer;
 }
