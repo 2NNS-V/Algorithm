@@ -1,32 +1,31 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <cstring>
 #include <algorithm>
-#define endl "\n"
 
 using namespace std;
 
 vector<int> solution(int n, vector<string> words) {
     vector<int> answer;
+    vector<string> st;
+    int cnt = 0;
     
-    vector<string> tmp;
-    int turn = 0;
-    
-    for (const string& word : words) {
-        if (find(tmp.begin(), tmp.end(), word) != tmp.end()) {
-            answer.push_back(turn % n + 1); // 번호
-            answer.push_back(turn / n + 1); // 차례
+    for (auto c: words) {
+        // 이미 말했던 단어인 경우
+        if (find(st.begin(), st.end(), c) != st.end()) {
+            answer.push_back(cnt % n + 1); // 자기 차례
+            answer.push_back(cnt / n + 1); 
             return answer;
         }
         
-        if (tmp.size() > 0 && tmp[tmp.size() - 1].back() != word.front()) {
-            answer.push_back(turn % n + 1); 
-            answer.push_back(turn / n + 1); 
+        // 끝말잇기 규칙에 어긋나는 경우
+        if (!st.empty() && st[st.size()-1].back() != c.front()) {
+            answer.push_back(cnt % n + 1);
+            answer.push_back(cnt / n + 1);
             return answer;
         }
-        turn++;
-        tmp.push_back(word);
+        cnt++;
+        st.push_back(c);
     }
     answer.push_back(0);
     answer.push_back(0);
