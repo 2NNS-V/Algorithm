@@ -1,18 +1,17 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <iostream>
 
 using namespace std;
 
 int solution(vector<string> want, vector<int> number, vector<string> discount) {
     int answer = 0;
-    map<string, int> m;
     
+    map<string, int> m;
+    int sum = 0;
     for (int i = 0; i < want.size(); i++) {
         m[want[i]] = number[i];
     }
-    
     
     for (int i = 0; i <= discount.size() - 10; i++) {
         map<string, int> tmp;
@@ -20,18 +19,15 @@ int solution(vector<string> want, vector<int> number, vector<string> discount) {
             tmp[discount[j]]++;
         }
         
-        // m에 존재하지 않거나 수량이 다르다면 X
-        bool matches = true;
-        for (auto item : m) {
-            if (tmp[item.first] != item.second || tmp.find(item.first) == tmp.end()) {
-                matches = false;
+        bool check = true;
+        for (auto it: m) {
+            if (tmp[it.first] != it.second || tmp.find(it.first) == tmp.end()) {
+                check = false;
                 break;
             }
         }
-
-        if (!matches) continue;
-        answer++;
         
+        if (check) answer++; 
     }
     return answer;
 }
