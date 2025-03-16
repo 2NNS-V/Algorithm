@@ -1,56 +1,47 @@
 #include <string>
 #include <vector>
-#include <iostream>
-#include <queue>
 #include <stack>
+#include <iostream>
 
 using namespace std;
 
 int solution(string s) {
     int answer = 0;
-    queue<char> q;
-
-    for (auto c : s) {
-        q.push(c);
-    }
-
+    stack<char> st;
+    
     for (int i = 0; i < s.size(); i++) {
-        stack<char> stack; // 스택 초기화
-        bool isValid = true;
-
-        for (int j = 0; j < s.size(); j++) {
-            char ss = q.front();
-            q.pop();
-
-            if (ss == '{' || ss == '(' || ss == '[') {
-                stack.push(ss);
-            } else if (ss == '}' || ss == ')' || ss == ']') {
-                if (!stack.empty()) {
-                    char tmp = stack.top();
-                    if ((ss == '}' && tmp == '{') || 
-                        (ss == ']' && tmp == '[') || 
-                        (ss == ')' && tmp == '(')) {
-                        stack.pop();
-                    } else {
-                        isValid = false; // 올바르지 않은 경우
+        bool check = false;
+        for (int j = i; j < i + s.size(); j++) {
+            int idx = j % s.size();
+            if (s[idx] == '}' || s[idx] == ']' || s[idx] == ')') {
+                if (st.empty()) {
+                    check = false;
+                    break;
+                }
+                else {
+                    char w = st.top();
+                    if ((s[idx] == '}' && w == '{') || (s[idx] == ']' && w == '[') || (s[idx] == ')' && w =='(')) {
+                        check = true;
+                        st.pop();
                     }
-                } else {
-                    isValid = false; // 올바르지 않은 경우
+                    else {
+                        check = false;
+                        break;
+                    }
                 }
             }
-
-            q.push(ss); // 회전 복원
+            else {
+                st.push(s[idx]);
+            }
         }
-
-        if (isValid && stack.empty()) {
-            answer++;
+        
+        if (check == true && st.empty()) answer++;
+    
+        while (!st.empty()) {
+            st.pop();
         }
-
-        // 왼쪽으로 한 칸 회전
-        char front = q.front();
-        q.pop();
-        q.push(front);
+        
     }
-
+    
     return answer;
 }
