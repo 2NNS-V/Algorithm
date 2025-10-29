@@ -3,36 +3,39 @@
 
 using namespace std;
 
-queue<pair <int, int> > q;
+int n, k; 
 int visited[100001] = {0,};
 
 int main() {
-    int n, k;
     cin >> n >> k;
-    q.push(pair <int, int> (n, 0));
-    visited[n] = 1;
-
-    while(!q.empty()) {
-        int num = q.front().first;
-        int cnt = q.front().second;
+    queue<int> q;
+    q.push(n);
+    
+    while (!q.empty()) {
+        int cur = q.front();
         q.pop();
 
-        if (num == k) {
-            cout << cnt;
-            return 0;
+        if (cur == k) break;
+
+        int minus = cur - 1;
+        int plus = cur + 1;
+        int multi = cur * 2;
+
+        if (minus >= 0 && !visited[minus]) {
+            q.push(minus);
+            visited[minus] = visited[cur] + 1;
         }
-        
-        if (!visited[num-1] && num - 1 >= 0 && num - 1 < 100001) {
-            visited[num-1] = 1;
-            q.push(pair<int, int> (num - 1, cnt + 1));
+
+        if (plus < 100001 && !visited[plus]) {
+            q.push(plus);
+            visited[plus] = visited[cur] + 1;
         }
-        if (!visited[num+1] && num + 1 >= 0 && num + 1 < 100001) {
-            visited[num+1] = 1;
-            q.push(pair<int, int> (num + 1, cnt + 1));
+
+        if (multi < 100001 && !visited[multi]) {
+            q.push(multi);
+            visited[multi] = visited[cur] + 1;
         }
-        if (!visited[num * 2] && num * 2 >= 0 && num * 2 < 100001) {
-            visited[num*2] = 1;
-            q.push(pair<int, int> (num * 2, cnt + 1));
-        }
+
     }
+    cout << visited[k];
 }
