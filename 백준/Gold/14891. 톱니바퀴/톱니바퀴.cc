@@ -1,72 +1,65 @@
 #include <iostream>
-#include <vector>
 
 using namespace std;
 
-int map[4][8] = {0,};
-
-void input() {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 8; j++) {
-            char a; cin >> a;
-            map[i][j] = a - '0';
-        }
-    }
-}
+int state[4][8];
 
 void rotate(int n, int d) {
-    if (d == -1) { // 반시계
-        int tmp = map[n][0];
-        for (int j = 0; j < 7; j++) {
-            map[n][j] = map[n][j+1];
+    if (d == -1) {
+        int first = state[n][0];
+        for (int i = 0; i < 7; i++) {
+            state[n][i] = state[n][i+1];
         }
-        map[n][7] = tmp;
+        state[n][7] = first;
+
     }
-
-    else if (d == 1) { // 시계
-        int tmp = map[n][7];
-        for (int j = 7; j >= 1; j--) {
-            map[n][j] = map[n][j-1];
+    else if (d == 1) {
+        int last = state[n][7];
+        for (int i = 7; i >= 1; i--) {
+            state[n][i] = state[n][i-1];
         }
-        map[n][0] = tmp;
+        state[n][0] = last;
     }
-}
-
-void solution() {
-    int k; cin >> k;
-    for (int i = 0; i < k; i++) {
-        int n, d; 
-        cin >> n >> d;
-        n--;
-
-        int dir[4] = {0, };
-        dir[n] = d;
-
-        for (int j = n - 1, t = -d; j >= 0; j--, t = -t) {
-            if (map[j][2] == map[j+1][6]) break;
-            dir[j] = t;
-        }
-
-        for (int j = n + 1, t = -d; j < 4; j++, t = -t) {
-            if (map[j-1][2] == map[j][6]) break;
-            dir[j] = t;
-        }
-        
-        for (int i = 0; i < 4; i++) {
-            rotate(i, dir[i]);
-        }
-    }
-
-    int ans = 0;
-    if (map[0][0]) ans += 1;
-    if (map[1][0]) ans += 2;
-    if (map[2][0]) ans += 4;
-    if (map[3][0]) ans += 8;
-    cout << ans;
 }
 
 int main() {
-    input();
-    solution();
-    return 0;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 8; j++) {
+            char ch; cin >> ch;
+            state[i][j] = ch - '0';
+        }
+    }
+
+    int k; cin >> k;
+    for (int i = 0; i < k; i++) {
+        int num, dir;
+        cin >> num >> dir;
+        num--;
+
+        int direction[4] = {0,};
+        direction[num] = dir;
+
+        for (int j = num - 1; j >= 0; j--) {
+            if (state[j][2] == state[j+1][6]) break;
+            direction[j] = -direction[j+1];
+        }
+
+        for (int j = num + 1; j < 8; j++) {
+            if (state[j-1][2] == state[j][6]) break;
+            direction[j] = -direction[j-1];
+        }
+
+        for (int j = 0; j < 4; j++) {
+            rotate(j, direction[j]);
+        }
+    }
+
+    int score = 0;
+    int weights[4] = {1, 2, 4, 8};
+    for (int i = 0; i < 4; i++) {
+        if (state[i][0] == 1) {
+            score += weights[i];
+        }
+    }
+    cout << score;
 }
