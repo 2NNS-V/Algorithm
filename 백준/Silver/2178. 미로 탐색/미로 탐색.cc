@@ -1,53 +1,53 @@
 #include <iostream>
-#include <queue>
 #include <vector>
+#include <queue>
+#include <utility>
 
 using namespace std;
 
-int visited[101][101] = {0,};
-vector<vector<int>> graph(101, vector<int> (101,0));
-int check[101][101] = {0,};
-int dx[] = {1, 0, -1, 0};
-int dy[] = {0, 1, 0 ,-1};
-int n, m;
+vector<vector<char> > graph;
+vector<vector<int> > visited;
 
-int bfs(int x, int y) {
-    queue<pair <int, int> > q;
-    q.push({x, y});
-    visited[x][y] =1;
-    check[x][y] = 1;
+int n, m;
+int dx[4] = {0, 1, 0, -1};
+int dy[4] = {1, 0, -1, 0};
+
+void bfs(int a, int b) {
+    queue<pair<int, int> > q;
+    q.push(make_pair(a, b));
+    visited[a][b] = 1;
 
     while (!q.empty()) {
-        int a = q.front().first;
-        int b = q.front().second;
+        int x = q.front().first; int y = q.front().second;
         q.pop();
 
-        for (int i =0;i<4;i++) {
-            int nx = a + dx[i];
-            int ny = b + dy[i];
-
-            if (nx >=0 && ny >=0 && nx < n && ny < m) {
-                if (!visited[nx][ny] && graph[nx][ny] == 1) {
-                    q.push({nx, ny});
-                    check[nx][ny] = check[a][b] + 1;
-                    visited[nx][ny] = 1;
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i]; int ny = y + dy[i];
+            if (nx >= 0 && nx < n && ny >= 0 && ny < m) {
+                if (visited[nx][ny] == 0 && graph[nx][ny] == '1') {
+                    q.push(make_pair(nx, ny));
+                    visited[nx][ny] = visited[x][y] + 1;
                 }
             }
         }
     }
-    return check[n-1][m-1];
 }
 
 int main() {
     cin >> n >> m;
-    
-    for (int i=0;i<n;i++) {
-        string s; 
-        cin >> s;
-        for (int j = 0;j<m; j++) {
-            graph[i][j] = s[j] -'0';
+    graph.resize(n, vector<char> (m, 0));
+    visited.resize(n, vector<int> (m, 0));
+
+    for (int i = 0; i < n; i++) {
+        string line;
+        cin >> line;
+
+        for (int j = 0; j < line.size(); j++) {
+            graph[i][j] = line[j];
         }
     }
-    cout << bfs(0,0);
-    return 0;
+
+    bfs(0, 0);
+    cout << visited[n-1][m-1];
+    
 }
