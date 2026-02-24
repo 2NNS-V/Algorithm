@@ -1,108 +1,99 @@
 #include <iostream>
+#include <vector>
 #include <queue>
-#include <utility>
-#include <climits>
 #include <algorithm>
+#include <climits>
+#include <utility>
 
 using namespace std;
 
-int n, t = 0;
-int shark_size = 2;
+// 상좌우하
+int dx[4] = {-1, 0, 1, 0};
+int dy[4] = {0, -1, 0, 1};
 
-int map[21][21] = {0,}; 
-int visited[21][21] = {0,};
+int n, size = 2;
+int t = 0, eat = 0;
+int min_dist = INT_MAX;
 
-// 위, 좌, 우, 아래
-int dx[4] = {0, -1, 1, 0}; 
-int dy[4] = {-1, 0, 0, 1};
+queue<pair<pair<int, int>, int>> q; // x, y, distance
+vector<vector<int>> arr; // 크기, 현위치
+vector<vector<int>> visited; // 방문여부
+vector<pair<int,int>> eaten;
 
-struct Target {
-    int r, c, d;
-    bool found;
-};
+// 탐색해서 위치까지 얼마나 걸리는 지 확인
+// 가까운지 확인
 
-queue<pair<int, int> > q;
-queue<int> dist_tmp;
-
-int dist[21][21] = {0,};
-
-Target bfs(int sx, int sy) {
-    int best = INT_MAX;
-
+bool bfs(int a, int b) { 
+    visited.assign(n, vector<int>(n, 0));
     while (!q.empty()) q.pop();
-    while (!dist_tmp.empty()) dist_tmp.pop();
-    vector<pair<int, int> > eat;
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            dist[i][j] = 0;
-            visited[i][j] = 0;
-        }
-    }
-
-    q.push(make_pair(sx, sy));
-    dist_tmp.push(0);
-    visited[sx][sy] = 1;
-
-
-    // 최단 거리 구하기
-    while (!q.empty()) {
-        int x = q.front().first; int y = q.front().second;
-        int d = dist_tmp.front();
-        dist[x][y] = d;
-        q.pop(); dist_tmp.pop();
-
-        // 먹을 수 있는지 확인 (현재 상어 크기보다 작아야 함)
-        if (map[x][y] != 0 && map[x][y] < shark_size) { 
-            if (best == INT_MAX) best = d;
-            if (d == best) eat.push_back(make_pair(x, y));
-        }   
-
-        if (d > best) break;
-
-        for (int i = 0; i < 4; i++) {
-            int nx = x + dx[i]; int ny = y + dy[i];
-            if (nx < 0 || nx >= n || ny < 0 || ny >= n || visited[nx][ny]) continue;
-            if (map[nx][ny] > shark_size) continue; // 지나갈 수 없음
-            
-            q.push(make_pair(nx, ny)); 
-            dist_tmp.push(d+1); // 이동 가능
-            visited[nx][ny] = 1;
-        }
-    }
-
-    // 먹을 수 있는 물고기
-    if (eat.empty()) return {-1, -1, -1, false};
-    sort(eat.begin(), eat.end());
-    return {eat[0].first, eat[0].second, best, true};
-}
-
-int main() {
-    cin >> n;
+    eaten.clear();
+    min_dist = INT_MAX;
     
-    int sx, sy;
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            cin >> map[i][j];
-            if (map[i][j] == 9) {
-                sx = i; sy = j;
+    q.push({{a, b}, 0});
+    visited[a][b] = 1;
+    
+    // 최단 거리
+    while (!q.empty()) {
+        int x = q.front().first.first; int y = q.front().first.second;
+        int dist = q.front().second;
+
+        if (arr[x][y] > 0 && arr[x][y] < size) {
+            // 먹어
+            if (min_dist == INT_MAX) min_dist = dist;
+            if (min_dist == dist) eaten.push_back({x, y});
+        }
+        q.pop();
+
+        if (dist > min_dist) continue;  // 가까운 노드 발견 시 더이상 탐색X
+        
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx >= 0 && nx < n && ny >= 0 && ny < n) {
+                if (visited[nx][ny] || arr[nx][ny] > size) continue;
+                q.push({{nx, ny}, dist + 1});
+                visited[nx][ny] = 1;
             }
         }
     }
 
-    map[sx][sy] = 0;
-    int eaten = 0;
+    if (eaten.size() == 0) return false;
+    else {
+        sort(eaten.begin(), eaten.end());
+        return true;
+    }
+}
 
+int main() {
+    cin >> n;
+    arr.resize(n, vector<int> (n, 0));
+    visited.resize(n, vector<int> (n, 0)); // 거리 걔산
+    
+    int x = 0, y = 0;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> arr[i][j];
+            if (arr[i][j] == 9) {
+                x = i; 
+                y = j;
+                arr[x][y] = 0;
+            }
+        }
+    }
+    
     while (1) {
-        Target tg = bfs(sx, sy);
-        if (!tg.found) break;
-        t += tg.d;
-        sx = tg.r; sy = tg.c;
-        map[sx][sy] = 0;
-        eaten++;
-        if (eaten == shark_size) {
-            shark_size++;
-            eaten = 0;
+        bool found = bfs(x, y);
+        if (!found) break;
+        t += min_dist;
+        int sx = eaten[0].first, sy = eaten[0].second;
+        arr[sx][sy] = 0;
+        visited[sx][sy] = 0; 
+        x = sx; y = sy;
+        eat++;
+        if (eat == size) {
+            size++; eat = 0;
         }
     }
     cout << t;
