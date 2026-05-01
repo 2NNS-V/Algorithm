@@ -1,45 +1,50 @@
-#include <vector>
+#include<vector>
+#include <iostream>
+#include <utility>
 #include <queue>
+
 using namespace std;
 
-#define MAX 101
+int dx[4] = {1, 0, -1, 0};
+int dy[4] = {0, 1, 0, -1};
 
-int visited[MAX][MAX] = {0,};
-int dx[4] = {-1,0,1,0};
-int dy[4] = {0,-1,0,1};
-queue<pair <int, int>> q;
-int cnt[MAX][MAX] = {0,};
-
-int bfs(int a, int b, vector<vector<int> > maps) {
-    q.push({a, b});
-    visited[a][b] = 1;
-    cnt[a][b] = 1;
+int bfs(int x, int y, vector<vector<int>>& maps, vector<vector<int>>& visited, int n, int m) {
+    queue<pair<int, int>> q;
+    vector<vector<int>> cnt(n, vector<int>(m, 0));
+    
+    q.push({x, y});
+    visited[x][y] = 1;
+    cnt[x][y] = 1;
     
     while (!q.empty()) {
-        int x = q.front().first;
-        int y = q.front().second;
+        int a = q.front().first;
+        int b = q.front().second;
         q.pop();
         
-        for (int i=0;i<4;i++) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-            
-            if (nx >= 0 && ny >= 0 && nx < maps.size() && ny < maps[0].size()) {
-                if (visited[nx][ny] == 0 && maps[nx][ny]) {
-                    visited[nx][ny] = 1;
-                    q.push({nx, ny});
-                    cnt[nx][ny] = cnt[x][y]+1;
+        for (int i = 0; i < 4; i++) {
+            int na = dx[i] + a;
+            int nb = dy[i] + b;
+             
+            if (na >= 0 && na < n && nb >= 0 && nb < m) {
+                if (!visited[na][nb] && maps[na][nb] == 1) {
+                    q.push({na, nb});
+                    visited[na][nb] = 1;
+                    cnt[na][nb] = cnt[a][b] + 1;
                 }
             }
         }
     }
-    if (cnt[maps.size() - 1][maps[0].size()-1] == 0) return -1;
-    else return cnt[maps.size() - 1][maps[0].size()-1];
+    
+    if (cnt[n-1][m-1] == 0) return -1;
+    else return cnt[n-1][m-1];
 }
 
 int solution(vector<vector<int> > maps)
 {
-    int answer = 0;
-    answer = bfs(0,0, maps);
-    return answer;
+    int n = maps.size();
+    int m = maps[0].size();
+    
+    vector<vector<int>> visited(n, vector<int> (m, 0));
+    
+    return bfs(0, 0, maps, visited, n, m);
 }
