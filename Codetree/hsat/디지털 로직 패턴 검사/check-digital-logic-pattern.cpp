@@ -25,7 +25,7 @@ int main() {
 
     // 첫 K개 초기 hash
     for (int i = 0; i < k; i++) {
-        cur = (cur << 1) + (s[i] - '0');
+        cur = (cur << 1) + (s[i] - '0'); // 숫자로 만들어주기
     }
 
     mp[cur]++;
